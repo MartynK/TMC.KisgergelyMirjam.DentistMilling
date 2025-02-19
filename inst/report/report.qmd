@@ -1,5 +1,5 @@
 ---
-title: "[TITLE]"
+title: "Sample Size Re-Estimation Report for Crown Milling Accuracy"
 author: "Márton Kiss, MD"
 format:
   docx:
@@ -17,8 +17,6 @@ execute:
 ---
 
 ```{r setup}
-
-fil <- here::here("inst","extdata","Iris.xls")
 
 source( here::here( "inst", "functions", "load_stuff.r"))
 source( here::here( "inst", "functions", "wrangling.r"))
@@ -42,11 +40,6 @@ load_all_Rdata(directory=here::here("inst","report","backend")) # Load slow suff
 
 # Remarks
 
-### MD5 checksum of the database used
-
-```{r, comment='', results='asis'}
-tools::md5sum(fil) # %>% as.character # Uncomment reporting path is not desirable
-```
 
 ### Other information regarding the document's compilation
 

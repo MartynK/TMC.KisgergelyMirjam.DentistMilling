@@ -4,93 +4,69 @@ format: docx
 editor: visual
 ---
 
-# Examples for quick reference
+# Executive Summary
 
-## Tables
+This report outlines an unblinded sample size re-estimation strategy for a study comparing the crown accuracy of two milling machines. Initially, a formal sample size calculation was not performed before data collection (2×9 measurements). Now, using data collected to date — and with the safeguard of having been blind to the data until this point — we propose to implement a group sequential design where we would update the sample size after interim analyses and therefore the (missing) initial sample size estimate's importance is diminished.
 
-Tables may be in a huxtable object for "seamless" word processing. The resulting table is ugly.
+A priori, we assumed an effect size (the ratio of the expected difference in RMS values to the standard deviation) of 0.8. With a global two-sided significance level of 0.05 and 80% power, we employ a group sequential design. Two scenarios are considered:
 
- \
+ - Scenario 1: A three-look design with interim analyses at approximately 33%, 67%, and 100% of the planned information.
+ - Scenario 2: A two-look design with the first interim analysis at 34.2% of the total sample size and the final analysis at 100%.
+ 
+In both scenarios, if a significant difference is observed at an interim look (with an adjusted significance level to account for multiple looks), the study can be terminated early for efficacy. Otherwise, a conditional power analysis will be used to update the sample size based on the interim data.
+
+
+# Background
+
+When comparing two continuous endpoints (here, the RMS errors from crowns produced by two milling machines), a two-sample t-test is appropriate (the RMS being from a chi-squared distribution with a very high degrees of freedom which may be regarded as normal).
+
+Because no formal a priori sample size calculation was completed, an unblinded sample size re-estimation method is now proposed. Group sequential designs allow for early stopping if efficacy is observed, thereby potentially reducing the number of subjects required while still controlling the overall Type I error rate. This design also relies less on the initial sample size estimate, as the sample size can be adjusted based on the interim data.
+
+The two scenarios below illustrate how the sequential design parameters adjust for multiple looks and detail the planned information rates, cumulative alpha spending, stage-specific significance levels, efficacy boundaries, cumulative power, and estimated sample sizes.
+
+The setup is also known as the Hwang-Shih-DeCani alpha spending framework with a gamma parameter fixed at -1.5.
+
+## Scenario 1: Three-Look Group Sequential Design
+
+This design involves three planned analyses at information rates of approximately 33.3%, 66.7%, and 100% of the total sample size. The table below summarizes the design parameters:
+
+```{r create_design}
+design <- getDesignGroupSequential(
+  typeOfDesign = "asHSD", 
+  informationRates = c(1/3, 2/3, 3/3), 
+  alpha = 0.05, twoSidedPower = TRUE, 
+  gammaA = -1.5, 
+  sided = 2)
+
+#print(design)
+#getDesignCharacteristics(design)
+
+designPlan <- getSampleSizeMeans(design, alternative = 0.8)
+
+summary(designPlan)
+
+```
+
+## Scenario 2: Two-Look Group Sequential Design
+
+This simpler design considers only one interim analysis (at 34.2% of the total information) before the final look at 100% of the data. The following table summarizes the design:
 
 ```{r}
 
-# generating the table which is comp.expensive for some reason
-tab <- data %>%
-  dplyr::select(!(species_no)) %>%
-  gtsummary::tbl_summary(
-    by = species_char
-  )
+design_2looks <- getDesignGroupSequential(
+  typeOfDesign = "asHSD", 
+  informationRates = c(.342, 3/3), 
+  alpha = 0.05, twoSidedPower = TRUE, 
+  gammaA = -1.5, 
+  sided = 2)
 
-tab %>%
-  as_hux_table()
+#print(design)
+#getDesignCharacteristics(design)
+
+designPlan_2looks <- getSampleSizeMeans(design_2looks, alternative = 0.8)
+
+summary(designPlan_2looks)
 
 ```
 
  \
-
-Having a custom ref. docx file, I played around with the formatting and cooked up something passable. Its not modifiable however.
-
- \
-
-```{r}
-#| df-print: kable
-#| tbl_colwidths: auto
-
-data(cars)
-
-
-
-tab <- cars  %>%
-    huxtable::as_hux() %>%
-    huxtable::theme_compact() 
-
-huxtable::font_size(tab) <- 6
-
-(tab)
-
-
-
-```
-
- \
-
-You *will* face an issue where a package outputs a "marvellously formatted" html table which would be horrible for your use case. That is a promise, but don't know how to handle it.
-
- \
-
-```{r}
-
-mod <- lm(petal_width ~ species_char + petal_length, data)
-
-sjPlot::tab_model(mod)
-
-
-```
-
- \
-
-Plots are nothing fancy.
-
- \
-
-```{r}
-
-ggstatsplot::ggbetweenstats(data, 
-                            species_char,
-                            petal_width,
-                            results.subtitle = FALSE) +
-  theme_bw()
-
-```
-
- \
-
-Text outputs; prints computationally intensive output loaded at the beginning.
-
- \
-
-```{r}
-
-cat(pi_estimate)
-
-```

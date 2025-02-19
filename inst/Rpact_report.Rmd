@@ -1,0 +1,66 @@
+
+---
+title: "Report"
+author: "www.rpact.com"
+date: 'Creation date: `r format(Sys.time(), "%d-%m-%Y")`'
+output: 
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    number_sections: true
+    self_contained: yes
+    highlight: pygments
+---
+
+<!--
+This document was created by the R package 'rpact' and the graphical user interface 'rpact.shiny'
+Author: Gernot Wassmer and Friedrich Pahlke
+Date: 17-02-2025
+License: This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License.
+To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.
+Please visit www.rpact.com for more information.
+-->
+
+# Working Environment
+
+```{r working_environment, include=TRUE, echo=TRUE}
+# Load the package `ggplot2`
+library(ggplot2)
+
+# Load the package `rpact`
+library(rpact)
+```
+
+# Design
+
+## R command
+
+```{r create_design, include=TRUE, echo=TRUE, results='hide'}
+design <- getDesignGroupSequential(typeOfDesign = "asHSD", informationRates =
+  c(0.33333333, 0.66666667, 1), alpha = 0.05, twoSidedPower = TRUE, gammaA = -1.5, sided =
+  2)
+print(design)
+getDesignCharacteristics(design)
+designPlan <- getSampleSizeMeans(design, alternative = 0.8)
+summary(designPlan)
+print(designPlan)
+```
+
+```{r design_output, include=TRUE, echo=FALSE, results='asis'}
+print(design, markdown = TRUE)
+print(getDesignCharacteristics(design), markdown = TRUE)
+print(summary(designPlan), markdown = TRUE)
+print(designPlan, markdown = TRUE)
+```
+
+
+***
+
+
+System: rpact `r  packageVersion("rpact")`, `r R.version.string`, platform: `r R.version$platform`
+
+```{r, include=TRUE, echo=FALSE, results='asis'}
+print(citation("rpact"), bibtex = FALSE)
+```
+

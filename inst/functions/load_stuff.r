@@ -1,8 +1,7 @@
 library(dplyr)
-library(gtsummary)
 library(ggplot2)
 library(kableExtra)
-library(lubridate)
+library(rpact)
 
 
 knitr::opts_chunk$set(
